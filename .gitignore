@@ -32,4 +32,4 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-config/.terraform.lock.hcl
+Teams_vms/Terraform_config/.terraform.lock.hcl
