@@ -8,8 +8,11 @@ variable "team_name" {
   type = string
 }
 
-variable "VMNames" {
-  type = list(string)
+variable "VM" {
+  type = list(object({
+    name       = string
+    public_key = optional(any)
+  }))
 }
 
 variable "tags" {

@@ -11,9 +11,9 @@ module "vm" {
   source = "github.com/Irish-Cream-Team/Terraform_moudles.git//VM?ref=da1a449ad1452e688c90c8b7121be61dfc08a34c"
 
   team_name = var.team_name
-  count     = length(var.VMNames)
+  count     = length(var.VM)
   VM = {
-    name = var.VMNames[count.index]
+    name = var.VM[count.index].name
   }
 
   tags = var.tags
