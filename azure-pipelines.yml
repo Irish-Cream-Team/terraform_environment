@@ -13,29 +13,24 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: Bash@3
+- task: TerraformInstaller@0
   inputs:
-    targetType: 'inline'
-    script: ls '$(System.DefaultWorkingDirectory)/Teams_vms/Vm_list'
-    
-# - task: TerraformInstaller@0
-#   inputs:
-#     terraformVersion: 'latest'
-# - task: TerraformTaskV3@3
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'init'
-#     workingDirectory: 'Teams_vms/Terraform_config'
-#     backendServiceArm: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
-#     backendAzureRmResourceGroupName: 'terraform'
-#     backendAzureRmStorageAccountName: 'tfstate4global'
-#     backendAzureRmContainerName: 'global-tfstate'
-#     backendAzureRmKey: '$(TeamName)-terraform.tfstate'
+    terraformVersion: 'latest'
+- task: TerraformTaskV3@3
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: 'Teams_vms/Terraform_config'
+    backendServiceArm: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
+    backendAzureRmResourceGroupName: 'terraform'
+    backendAzureRmStorageAccountName: 'tfstate4global'
+    backendAzureRmContainerName: 'global-tfstate'
+    backendAzureRmKey: '$(TeamName)-terraform.tfstate'
 
-# - task: TerraformTaskV3@3
-#   inputs:
-#     provider: 'azurerm'
-#     command: 'apply'
-#     workingDirectory: '$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config'
-#     commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="Teams_vms/Vm_list/"$(TeamName).tfvars"'
-#     environmentServiceNameAzureRM: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
+- task: TerraformTaskV3@3
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config'
+    commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars"'
+    environmentServiceNameAzureRM: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
