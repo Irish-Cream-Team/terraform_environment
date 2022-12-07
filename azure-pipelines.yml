@@ -16,7 +16,7 @@ steps:
 - task: Bash@3
   inputs:
     targetType: 'inline'
-    script: '$(System.DefaultWorkingDirectory)'
+    script: ls '$(System.DefaultWorkingDirectory)'
     
 # - task: TerraformInstaller@0
 #   inputs:
