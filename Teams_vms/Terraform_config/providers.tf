@@ -10,12 +10,6 @@ terraform {
 
   }
   backend "azurerm" {
-    storage_account_name = "tfstate4global"
-    container_name       = "global-tfstate"
-    key                  = "Team_Name-terraform.tfstate"
-    resource_group_name  = "terraform"
-    subscription_id      = "e0cc7faf-3760-4b0c-a9df-fecf8d900589"
-
   }
 }
 

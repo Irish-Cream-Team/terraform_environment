@@ -33,3 +33,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 Teams_vms/Terraform_config/.terraform.lock.hcl
+Teams_vms/Terraform_config/providers.tf
