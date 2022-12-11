@@ -32,6 +32,6 @@ steps:
     provider: 'azurerm'
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config'
-    commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars"'
+    commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
     environmentServiceNameAzureRM: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
   displayName: "Terraform apply for $(TeamName)"
