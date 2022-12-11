@@ -1,0 +1,66 @@
+{
+  "VM": [
+    {
+      "name": "course-vm-1"
+    },
+    {
+      "name": "course-vm-2"
+    },
+    {
+      "name": "course-vm-3"
+    },
+    {
+      "name": "course-vm-4"
+    },
+    {
+      "name": "course-vm-5"
+    },
+    {
+      "name": "course-vm-6"
+    },
+    {
+      "name": "course-vm-7"
+    },
+    {
+      "name": "course-vm-8"
+    },
+    {
+      "name": "course-vm-9"
+    },
+    {
+      "name": "course-vm-10"
+    },
+    {
+      "name": "course-vm-11"
+    },
+    {
+      "name": "course-vm-12"
+    },
+    {
+      "name": "course-vm-13"
+    },
+    {
+      "name": "course-vm-14"
+    },
+    {
+      "name": "course-vm-15"
+    },
+    {
+      "name": "course-vm-16"
+    },
+    {
+      "name": "course-vm-17"
+    },
+    {
+      "name": "course-vm-18"
+    },
+    {
+      "name": "course-vm-19"
+    },
+    {
+      "name": "course-vm-20"
+    }
+  ],
+  "global_resource_group_name": "global",
+  "team_name": "course-yesodot"
+}
