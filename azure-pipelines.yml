@@ -19,7 +19,7 @@ stages:
             backendAzureRmResourceGroupName: 'terraform'
             backendAzureRmStorageAccountName: 'tfstate4global'
             backendAzureRmContainerName: 'global-tfstate'
-            backendAzureRmKey: overlap-terraform.tfstate'
+            backendAzureRmKey: $(TeamName)-terraform.tfstate'
           displayName: "Terraform init"
         - task: TerraformTaskV3@3
           inputs:
