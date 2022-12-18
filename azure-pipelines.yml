@@ -19,6 +19,7 @@ stages:
               workingDirectory: $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
               displayName: "Get team name"
               script: |
+                echo `git diff-tree --no-commit-id --name-only -r  HEAD^`
                 export vm_list_file=`git diff-tree --no-commit-id --name-only -r  HEAD^ | grep -E '*.tfvars.json'`
 
                 if [ `echo $vm_list_file | wc -w` -gt 1 ]
@@ -37,6 +38,7 @@ stages:
                 echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
 
       - job: create_vms
+        dependsOn: file_change
         steps:
           - task: TerraformInstaller@0
             inputs:
