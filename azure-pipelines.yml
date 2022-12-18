@@ -1,64 +1,71 @@
 trigger:
   branches:
     include:
-      - develop
+    - develop
+  paths:
+    include:
+    - 'Teams_vms/Vm_list/*'
 
 stages:
   - stage: Publish
     pool:
       vmImage: ubuntu-latest
     jobs:
-      - job: create_vms
+      - job: echo
         steps:
-          - task: TerraformInstaller@0
-            inputs:
-              terraformVersion: "latest"
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: "azurerm"
-              command: "init"
-              workingDirectory: "Teams_vms/Terraform_config"
-              backendServiceArm: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
-              backendAzureRmResourceGroupName: "terraform"
-              backendAzureRmStorageAccountName: "tfstate4global"
-              backendAzureRmContainerName: "global-tfstate"
-              backendAzureRmKey: $(TeamName)-terraform.tfstate
-            displayName: "Terraform init"
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: "azurerm"
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config"
-              commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
-              environmentServiceNameAzureRM: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
-            displayName: "Terraform apply for $(TeamName)"
+          - bash: echo this is develop"
+            displayName: 'Run a one-line script'
+      # - job: create_vms
+      #   steps:
+      #     - task: TerraformInstaller@0
+      #       inputs:
+      #         terraformVersion: "latest"
+      #     - task: TerraformTaskV3@3
+      #       inputs:
+      #         provider: "azurerm"
+      #         command: "init"
+      #         workingDirectory: "Teams_vms/Terraform_config"
+      #         backendServiceArm: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
+      #         backendAzureRmResourceGroupName: "terraform"
+      #         backendAzureRmStorageAccountName: "tfstate4global"
+      #         backendAzureRmContainerName: "global-tfstate"
+      #         backendAzureRmKey: $(TeamName)-terraform.tfstate
+      #       displayName: "Terraform init"
+      #     - task: TerraformTaskV3@3
+      #       inputs:
+      #         provider: "azurerm"
+      #         command: "apply"
+      #         workingDirectory: "$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config"
+      #         commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
+      #         environmentServiceNameAzureRM: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
+      #       displayName: "Terraform apply for $(TeamName)"
 
-      - job: restart_vm_password
-        dependsOn: create_vms
-        steps:
-          - task: Bash@3
-            inputs:
-              targetType: "inline"
-              workingDirectory: $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
-              displayName: "Restart vms password"
-              script: |
-                export vm_list_file=`$(TeamName).tfvars.json`
+      # - job: restart_vm_password
+      #   dependsOn: create_vms
+      #   steps:
+      #     - task: Bash@3
+      #       inputs:
+      #         targetType: "inline"
+      #         workingDirectory: $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
+      #         displayName: "Restart vms password"
+      #         script: |
+      #           export vm_list_file=`$(TeamName).tfvars.json`
 
-                echo "Restarting password for vms in $vm_list_file"
-                resource_group=`jq -c '.team_name' $vm_list_file | tr -d '"'`
-                echo "Resource group is $resource_group"
+      #           echo "Restarting password for vms in $vm_list_file"
+      #           resource_group=`jq -c '.team_name' $vm_list_file | tr -d '"'`
+      #           echo "Resource group is $resource_group"
 
-                jq -c '.VM[]' $vm_list_file | while read i; 
-                do
-                    vm_name=`echo $i | jq -c '.name'| tr -d '"'`
-                    public_key=`echo $i | jq -c '.public_key' | tr -d '"'`
-                    echo "Creating user with public key for $vm_name"
+      #           jq -c '.VM[]' $vm_list_file | while read i; 
+      #           do
+      #               vm_name=`echo $i | jq -c '.name'| tr -d '"'`
+      #               public_key=`echo $i | jq -c '.public_key' | tr -d '"'`
+      #               echo "Creating user with public key for $vm_name"
                     
-                    az vm extension set \
-                        --resource-group $resource_group\
-                        --vm-name $vm_name \
-                        --name "VMAccessForLinux" \
-                        --publisher "Microsoft.OSTCExtensions" \
-                        --version "1.4" \
-                        --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
-                done
+      #               az vm extension set \
+      #                   --resource-group $resource_group\
+      #                   --vm-name $vm_name \
+      #                   --name "VMAccessForLinux" \
+      #                   --publisher "Microsoft.OSTCExtensions" \
+      #                   --version "1.4" \
+      #                   --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
+      #           done
