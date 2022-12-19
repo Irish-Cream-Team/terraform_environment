@@ -13,7 +13,7 @@ stages:
     jobs:
       - job: file_change
         steps:
-          - bash: |   
+          - bash: |
               git fetch --all
               git switch $(basename $(Build.SourceBranch))
               git pull --unshallow
@@ -21,8 +21,8 @@ stages:
               export last_commit_id=`git log --format="%H" -n 1`
               echo "Last commit id is $last_commit_id"
               echo "Checking if file changed"
-              export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json'`
-              
+              export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}'`
+
               echo "File changed is $vm_list_file"
 
               if [ `echo $vm_list_file | wc -w` -gt 1 ]
@@ -40,7 +40,7 @@ stages:
               echo "Team name is $vm_list_file"
               echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
             name: get_file_changes
-          
+
           - task: TerraformInstaller@0
             inputs:
               terraformVersion: "latest"
@@ -56,7 +56,7 @@ stages:
               backendAzureRmContainerName: "global-tfstate"
               backendAzureRmKey: $(TeamName)-terraform.tfstate
             displayName: "Terraform init"
-          
+
           - task: TerraformTaskV3@3
             inputs:
               provider: "azurerm"
@@ -68,9 +68,9 @@ stages:
 
           - bash: |
               cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
-              
+
               export vm_list_file=`$(TeamName).tfvars.json`
-              
+
               echo "Resource group is $resource_group"
 
               jq -c '.VM[]' $vm_list_file | while read i; 
