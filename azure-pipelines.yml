@@ -20,6 +20,7 @@ stages:
               displayName: "Get team name"
               script: |
                 # last commit id
+                echo "Getting last commit id `git log --format="%H" -n 2 | tail -n 100`"
                 export last_commit_id=`git log --format="%H" -n 2 | tail -1`
                 echo "Last commit id is $last_commit_id"
                 echo "Checking if file changed"
