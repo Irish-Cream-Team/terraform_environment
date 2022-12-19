@@ -20,14 +20,14 @@ stages:
               displayName: "Get team name"
               script: |
                 git pull --unshallow
-                git log --format="%H"
-                # # last commit id
-                # echo "Getting last commit id `git log --format="%H" -n 2 | tail -n 100`"
-                # export last_commit_id=`git log --format="%H" -n 2 | tail -1`
-                # echo "Last commit id is $last_commit_id"
-                # echo "Checking if file changed"
-                # echo "test `git diff-tree --no-commit-id --name-only -r $last_commit_id`"
-                # # export vm_list_file=`git diff-tree --no-commit-id --name-only -r $(last_commit_id) | grep -E '*.tfvars.json'`
+
+                # last commit id
+                echo "Getting last commit id `git log --format="%H" -n 2 | tail -n 100`"
+                export last_commit_id=`git log --format="%H" -n 2 | tail -1`
+                echo "Last commit id is $last_commit_id"
+                echo "Checking if file changed"
+                echo "test `git diff-tree --no-commit-id --name-only -r $last_commit_id`"
+                # export vm_list_file=`git diff-tree --no-commit-id --name-only -r $(last_commit_id) | grep -E '*.tfvars.json'`
 
                 if [ `echo $vm_list_file | wc -w` -gt 1 ]
                 then
