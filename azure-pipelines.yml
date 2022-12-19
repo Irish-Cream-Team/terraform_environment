@@ -19,10 +19,12 @@ stages:
               workingDirectory: $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
               displayName: "Get team name"
               script: |
-                # Resolve the HEAD^ revision to a commit hash
-                PARENT_COMMIT=$(git rev-parse HEAD^)
-                echo `git diff-tree --no-commit-id --name-only $PARENT_COMMIT`
-                export vm_list_file=`git diff-tree --no-commit-id --name-only -r  HEAD^1 | grep -E '*.tfvars.json'`
+                # last commit id
+                export last_commit_id=$(git diff-tree  --no-commit-id --name-only -r `git log --format="%H" -n 1`)
+
+                echo "Checking if file changed"
+                echo "`git diff-tree --no-commit-id --name-only -r $(last_commit_id)`"
+                # export vm_list_file=`git diff-tree --no-commit-id --name-only -r $(last_commit_id) | grep -E '*.tfvars.json'`
 
                 if [ `echo $vm_list_file | wc -w` -gt 1 ]
                 then
@@ -76,8 +78,6 @@ stages:
               script: |
                 export vm_list_file=`$(TeamName).tfvars.json`
 
-                echo "Restarting password for vms in $vm_list_file"
-                resource_group=`jq -c '.team_name' $vm_list_file | tr -d '"'`
                 echo "Resource group is $resource_group"
 
                 jq -c '.VM[]' $vm_list_file | while read i; 
