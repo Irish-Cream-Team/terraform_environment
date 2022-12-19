@@ -24,7 +24,7 @@ stages:
                 git switch $(basename $(Build.SourceBranch))
                 git pull --unshallow
                 # last commit id
-                export last_commit_id=`git log --format="%H" -n 2 | tail -1`
+                export last_commit_id=`git log --format="%H" -n 2`
                 echo "Last commit id is $last_commit_id"
                 echo "Checking if file changed"
                 export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json'`
