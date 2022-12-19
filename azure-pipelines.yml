@@ -20,7 +20,7 @@ stages:
               displayName: "Get team name"
               script: |
                 # last commit id
-                export last_commit_id=`git log --format="%H" -n 1`
+                export last_commit_id=`git log --format="%H" -n 2`
                 echo "Last commit id is $last_commit_id"
                 echo "Checking if file changed"
                 echo "test `git diff-tree --no-commit-id --name-only -r $last_commit_id`"
