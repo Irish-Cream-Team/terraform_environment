@@ -1,0 +1,12 @@
+# trigger azure pipeline on new pr in github 
+trigger:
+  pr:
+  - develop
+
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
