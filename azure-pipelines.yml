@@ -21,6 +21,7 @@ stages:
               script: |
   
                 git pull --unshallow
+                git switch $(basename $(Build.SourceBranch))
                 # last commit id
                 export last_commit_id=`git log --format="%H" -n 2 | tail -1`
                 echo "Last commit id is $last_commit_id"
