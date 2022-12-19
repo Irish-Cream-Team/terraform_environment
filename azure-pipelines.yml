@@ -24,17 +24,17 @@ stages:
                 # echo `git diff-tree --no-commit-id --name-only $PARENT_COMMIT`
                 # export vm_list_file=`git diff-tree --no-commit-id --name-only -r  $PARENT_COMMIT | grep -E '*.tfvars.json'`
 
-                # if [ `echo $vm_list_file | wc -w` -gt 1 ]
-                # then
-                # echo "More then one file changed, exiting"
-                # exit 1
-                # fi
+                if [ `echo $vm_list_file | wc -w` -gt 1 ]
+                then
+                echo "More then one file changed, exiting"
+                exit 1
+                fi
 
-                # if [ -z "$vm_list_file" ]
-                # then
-                # echo "No file changed, exiting"
-                # exit 1
-                # fi
+                if [ -z "$vm_list_file" ]
+                then
+                echo "No file changed, exiting"
+                exit 1
+                fi
 
                 # echo "Team name is $vm_list_file"
                 # echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
