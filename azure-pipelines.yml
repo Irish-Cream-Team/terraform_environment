@@ -20,8 +20,8 @@ stages:
               displayName: "Get team name"
               script: |
   
-                git pull --unshallow
                 git switch $(basename $(Build.SourceBranch))
+                git pull --unshallow
                 # last commit id
                 export last_commit_id=`git log --format="%H" -n 2 | tail -1`
                 echo "Last commit id is $last_commit_id"
