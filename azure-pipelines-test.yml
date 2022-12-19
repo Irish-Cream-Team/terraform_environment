@@ -1,7 +1,10 @@
 # trigger azure pipeline on new pr in github 
 trigger:
-  pr:
-  - develop
+  branches:
+    include:
+      - '+refs/pull/*/merge'
+    exclude:
+      - 'refs/heads/develop'
 
 
 pool:
