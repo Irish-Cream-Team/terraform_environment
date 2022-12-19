@@ -19,8 +19,10 @@ stages:
               workingDirectory: $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
               displayName: "Get team name"
               script: |
-                echo "`git diff @~1 @`"
-                export vm_list_file=`git diff-tree --no-commit-id --name-only -r  $(Build.SourceVersion) | grep -E '*.tfvars.json'`
+                # Resolve the HEAD^ revision to a commit hash
+                PARENT_COMMIT=$(git rev-parse HEAD^)
+                echo `git diff-tree --no-commit-id --name-only $PARENT_COMMIT`
+                export vm_list_file=`git diff-tree --no-commit-id --name-only -r  HEAD^1 | grep -E '*.tfvars.json'`
 
                 if [ `echo $vm_list_file | wc -w` -gt 1 ]
                 then
