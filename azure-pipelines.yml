@@ -45,7 +45,7 @@ stages:
               # Set variable for next stage
               echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
 
-            name: get_file_changes
+            name: Get_file_changes
 
           - task: TerraformInstaller@0
             inputs:
@@ -61,7 +61,7 @@ stages:
               backendAzureRmStorageAccountName: "tfstate4global"
               backendAzureRmContainerName: "global-tfstate"
               backendAzureRmKey: $(TeamName)-terraform.tfstate
-            displayName: "Terraform init"
+            displayName: "Terraform init $(TeamName)"
 
           - task: TerraformTaskV3@3
             inputs:
