@@ -4,7 +4,7 @@ trigger:
       - main
   paths:
     include:
-      - Teams_vms/Vm_list/*
+      - Teams_vms/Vm_list/netstack.tfvars.json
 
 stages:
   - stage: Publish
