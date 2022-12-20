@@ -75,11 +75,11 @@ stages:
           - bash: |
               cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
 
-              export vm_list_file=`$(TeamName).tfvars.json`
+              export vm_file=`$(TeamName).tfvars.json`
 
               echo "Resource group is $resource_group"
 
-              jq -c '.VM[]' $vm_list_file | while read i; 
+              jq -c '.VM[]' $vm_file | while read i; 
               do
                   vm_name=`echo $i | jq -c '.name'| tr -d '"'`
                   public_key=`echo $i | jq -c '.public_key' | tr -d '"'`

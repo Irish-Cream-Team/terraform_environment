@@ -24,7 +24,6 @@ variable "tags" {
 }
 
 
-
 variable "global_resource_group_name" {
   type    = string
   default = "global"
