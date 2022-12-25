@@ -13,64 +13,64 @@ stages:
     jobs:
       - job: file_change
         steps:
-          - bash: |
+          #     - bash: |
 
-              # Get all git commit history 
-              git fetch --all
-              git switch $(basename $(Build.SourceBranch))
-              git pull --unshallow
+          #         # Get all git commit history
+          #         git fetch --all
+          #         git switch $(basename $(Build.SourceBranch))
+          #         git pull --unshallow
 
-              # Get last commit id
-              export last_commit_id=`git log --format="%H" -n 1`
-              echo "Last commit id is $last_commit_id"
+          #         # Get last commit id
+          #         export last_commit_id=`git log --format="%H" -n 1`
+          #         echo "Last commit id is $last_commit_id"
 
-              # Get var files name that changed in last commit
-              export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}' | awk -F "." '{ print $1}'`
+          #         # Get var files name that changed in last commit
+          #         export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}' | awk -F "." '{ print $1}'`
 
-              # Check if more then one file changed
-              if [ `echo $vm_list_file | wc -w` -gt 1 ]
-              then
-              echo "More then one file changed, exiting"
-              exit 1
-              fi
+          #         # Check if more then one file changed
+          #         if [ `echo $vm_list_file | wc -w` -gt 1 ]
+          #         then
+          #         echo "More then one file changed, exiting"
+          #         exit 1
+          #         fi
 
-              # Check if no file changed
-              if [ -z "$vm_list_file" ]
-              then
-              echo "No file changed, exiting"
-              exit 1
-              fi
+          #         # Check if no file changed
+          #         if [ -z "$vm_list_file" ]
+          #         then
+          #         echo "No file changed, exiting"
+          #         exit 1
+          #         fi
 
-              echo "Team name is $vm_list_file"
-              # Set variable for next stage
-              echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
+          #         echo "Team name is $vm_list_file"
+          #         # Set variable for next stage
+          #         echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
 
-            name: Get_file_changes
+          #       name: Get_file_changes
 
-          - task: TerraformInstaller@0
-            inputs:
-              terraformVersion: "latest"
+          #     - task: TerraformInstaller@0
+          #       inputs:
+          #         terraformVersion: "latest"
 
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: "azurerm"
-              command: "init"
-              workingDirectory: "Teams_vms/Terraform_config"
-              backendServiceArm: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
-              backendAzureRmResourceGroupName: "terraform"
-              backendAzureRmStorageAccountName: "tfstate4global"
-              backendAzureRmContainerName: "global-tfstate"
-              backendAzureRmKey: $(TeamName)-terraform.tfstate
-            displayName: "Terraform init $(TeamName)"
+          #     - task: TerraformTaskV3@3
+          #       inputs:
+          #         provider: "azurerm"
+          #         command: "init"
+          #         workingDirectory: "Teams_vms/Terraform_config"
+          #         backendServiceArm: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
+          #         backendAzureRmResourceGroupName: "terraform"
+          #         backendAzureRmStorageAccountName: "tfstate4global"
+          #         backendAzureRmContainerName: "global-tfstate"
+          #         backendAzureRmKey: $(TeamName)-terraform.tfstate
+          #       displayName: "Terraform init $(TeamName)"
 
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: "azurerm"
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config"
-              commandOptions: '-input=false -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
-              environmentServiceNameAzureRM: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
-            displayName: "Terraform apply for $(TeamName)"
+          #     - task: TerraformTaskV3@3
+          #       inputs:
+          #         provider: "azurerm"
+          #         command: "apply"
+          #         workingDirectory: "$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config"
+          #         commandOptions: '-input=false -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
+          #         environmentServiceNameAzureRM: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
+          #       displayName: "Terraform apply for $(TeamName)"
 
           - bash: |
               cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
@@ -101,12 +101,12 @@ stages:
                       --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
               done
             name: Restart_vms_password
-            timeoutInMinutes: 1
+            timeoutInMinutes: 2
 
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: 'azurerm'
-              command: 'destroy'
-              commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
-              environmentServiceNameAzureRM: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)' 
-            displayName: "Terraform cleanup for $(TeamName)"
+          # - task: TerraformTaskV3@3
+          #   inputs:
+          #     provider: 'azurerm'
+          #     command: 'destroy'
+          #     commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
+          #     environmentServiceNameAzureRM: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
+          #   displayName: "Terraform cleanup for $(TeamName)"
