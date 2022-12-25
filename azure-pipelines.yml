@@ -75,7 +75,8 @@ stages:
               - bash: |
                   cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
 
-                  export vm_file=`$(TeamName).tfvars.json`
+                  echo "TeamName is $(TeamName)"
+                  export vm_file="$(TeamName).tfvars.json"
                   echo "VM file is $vm_file"
 
                   export resource_group=`cat Team_Name.tfvars.json | jq '.team_name'`
