@@ -13,37 +13,38 @@ stages:
     jobs:
       - job: file_change
         steps:
-          #     - bash: |
+              - bash: |
 
-          #         # Get all git commit history
-          #         git fetch --all
-          #         git switch $(basename $(Build.SourceBranch))
-          #         git pull --unshallow
+                  # Get all git commit history
+                  git fetch --all
+                  git switch $(basename $(Build.SourceBranch))
+                  git pull --unshallow
 
-          #         # Get last commit id
-          #         export last_commit_id=`git log --format="%H" -n 1`
-          #         echo "Last commit id is $last_commit_id"
+                  # Get last commit id
+                  export last_commit_id=`git log --format="%H" -n 1`
+                  echo "Last commit id is $last_commit_id"
 
-          #         # Get var files name that changed in last commit
-          #         export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}' | awk -F "." '{ print $1}'`
+                  # Get var files name that changed in last commit
+                  # export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}' | awk -F "." '{ print $1}'`
+                  export vm_list_file="Team_Name"
 
-          #         # Check if more then one file changed
-          #         if [ `echo $vm_list_file | wc -w` -gt 1 ]
-          #         then
-          #         echo "More then one file changed, exiting"
-          #         exit 1
-          #         fi
+                  # # Check if more then one file changed
+                  # if [ `echo $vm_list_file | wc -w` -gt 1 ]
+                  # then
+                  # echo "More then one file changed, exiting"
+                  # exit 1
+                  # fi
 
-          #         # Check if no file changed
-          #         if [ -z "$vm_list_file" ]
-          #         then
-          #         echo "No file changed, exiting"
-          #         exit 1
-          #         fi
+                  # # Check if no file changed
+                  # if [ -z "$vm_list_file" ]
+                  # then
+                  # echo "No file changed, exiting"
+                  # exit 1
+                  # fi
 
-          #         echo "Team name is $vm_list_file"
-          #         # Set variable for next stage
-          #         echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
+                  echo "Team name is $vm_list_file"
+                  # Set variable for next stage
+                  echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
 
           #       name: Get_file_changes
 
@@ -73,8 +74,7 @@ stages:
           #       displayName: "Terraform apply for $(TeamName)"
 
           - bash: |
-              cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
-              export TeamName="Team_Name"
+              cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/)
               export vm_file=`$(TeamName).tfvars.json`
               echo "VM file is $vm_file"
 
