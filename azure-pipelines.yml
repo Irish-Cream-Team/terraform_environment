@@ -74,7 +74,7 @@ stages:
 
           - bash: |
               cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
-
+              export TeamName="Team_Name"
               export vm_file=`$(TeamName).tfvars.json`
               echo "VM file is $vm_file"
 
