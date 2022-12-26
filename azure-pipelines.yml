@@ -103,7 +103,7 @@ stages:
                           --name "VMAccessForLinux" \
                           --publisher "Microsoft.OSTCExtensions" \
                           --version "1.4" \
-                          --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
+                          --protected-settings '{"username": "$vm_name","ssh_key":"$public_key"}'
 
                   done
 
