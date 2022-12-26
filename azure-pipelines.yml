@@ -73,7 +73,7 @@ stages:
               #   displayName: "Terraform apply for $(TeamName)"
 
               - bash: |
-                  env
+                  echo "Team name is $TeamName"
                   # cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
 
                   # echo "TeamName is $(TeamName)"
