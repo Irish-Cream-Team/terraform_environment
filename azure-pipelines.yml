@@ -74,11 +74,11 @@ stages:
 
               - bash: |
                   echo "Team name is $(TeamName)"
-                  # cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
+                  cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
 
-                  # echo "TeamName is $(TeamName)"
-                  # export vm_file="$(TeamName).tfvars.json"
-                  # echo "VM file is $vm_file"
+                  echo "TeamName is $(TeamName)"
+                  export vm_file="$(TeamName).tfvars.json"
+                  echo "VM file is $vm_file"
 
                   # export resource_group=`cat Team_Name.tfvars.json | jq '.team_name'`
                   # echo "Resource group is $resource_group"
