@@ -83,10 +83,10 @@ stages:
                   export resource_group=`cat $vm_file | jq '.team_name'`
                   echo "Resource group is $resource_group"
 
-                  # jq -c '.VM[]' $vm_file | while read i; 
-                  # do  
+                  jq -c '.VM[]' $vm_file | while read i; 
+                  do  
 
-                  #     echo "inside loop"
+                      echo "inside loop"
                   #     vm_name=`echo $i | jq -c '.name'| tr -d '"'`
                   #     echo "VM name is $vm_name"
 
@@ -101,7 +101,7 @@ stages:
                   #         --publisher "Microsoft.OSTCExtensions" \
                   #         --version "1.4" \
                   #         --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
-                  # done
+                  done
                 name: Restart_vms_password
                 timeoutInMinutes: 2
 
