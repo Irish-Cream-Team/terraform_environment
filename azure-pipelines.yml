@@ -73,34 +73,35 @@ stages:
               #   displayName: "Terraform apply for $(TeamName)"
 
               - bash: |
-                  cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
+                  env
+                  # cd $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
 
-                  echo "TeamName is $(TeamName)"
-                  export vm_file="$(TeamName).tfvars.json"
-                  echo "VM file is $vm_file"
+                  # echo "TeamName is $(TeamName)"
+                  # export vm_file="$(TeamName).tfvars.json"
+                  # echo "VM file is $vm_file"
 
-                  export resource_group=`cat Team_Name.tfvars.json | jq '.team_name'`
-                  echo "Resource group is $resource_group"
+                  # export resource_group=`cat Team_Name.tfvars.json | jq '.team_name'`
+                  # echo "Resource group is $resource_group"
 
-                  jq -c '.VM[]' $vm_file | while read i; 
-                  do  
+                  # jq -c '.VM[]' $vm_file | while read i; 
+                  # do  
 
-                      echo "inside loop"
-                      vm_name=`echo $i | jq -c '.name'| tr -d '"'`
-                      echo "VM name is $vm_name"
+                  #     echo "inside loop"
+                  #     vm_name=`echo $i | jq -c '.name'| tr -d '"'`
+                  #     echo "VM name is $vm_name"
 
-                      public_key=`echo $i | jq -c '.public_key' | tr -d '"'`
-                      echo "Creating user with public key for $vm_name"
+                  #     public_key=`echo $i | jq -c '.public_key' | tr -d '"'`
+                  #     echo "Creating user with public key for $vm_name"
                       
 
-                      az vm extension set \
-                          --resource-group $resource_group\
-                          --vm-name $vm_name \
-                          --name "VMAccessForLinux" \
-                          --publisher "Microsoft.OSTCExtensions" \
-                          --version "1.4" \
-                          --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
-                  done
+                  #     az vm extension set \
+                  #         --resource-group $resource_group\
+                  #         --vm-name $vm_name \
+                  #         --name "VMAccessForLinux" \
+                  #         --publisher "Microsoft.OSTCExtensions" \
+                  #         --version "1.4" \
+                  #         --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
+                  # done
                 name: Restart_vms_password
                 timeoutInMinutes: 2
 
