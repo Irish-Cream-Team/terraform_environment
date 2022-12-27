@@ -84,7 +84,7 @@ stages:
                   export vm_file="$(TeamName).tfvars.json"
                   echo "VM file is $vm_file"
                   
-                  export resource_group=`cat $vm_file | jq '.team_name'`
+                  export resource_group=`cat $vm_file | jq '.team_name' | tr -d '"'`
                   echo "Resource group is $resource_group"
                   
                   jq -c '.VM[]' $vm_file | while read i; 
