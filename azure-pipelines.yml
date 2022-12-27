@@ -2,9 +2,9 @@ trigger:
   branches:
     include:
       - develop
-  # paths:
-  #   include:
-  #     - Teams_vms/Vm_list/*
+  paths:
+    include:
+      - Teams_vms/Vm_list/*
 
 stages:
   - stage: Publish
