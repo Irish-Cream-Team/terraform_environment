@@ -11,57 +11,101 @@ stages:
     pool:
       vmImage: ubuntu-latest
     jobs:
-      - job: create_vms
+      - job: file_change
         steps:
-          - task: TerraformInstaller@0
-            inputs:
-              terraformVersion: "latest"
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: "azurerm"
-              command: "init"
-              workingDirectory: "Teams_vms/Terraform_config"
-              backendServiceArm: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
-              backendAzureRmResourceGroupName: "terraform"
-              backendAzureRmStorageAccountName: "tfstate4global"
-              backendAzureRmContainerName: "global-tfstate"
-              backendAzureRmKey: $(TeamName)-terraform.tfstate
-            displayName: "Terraform init"
-          - task: TerraformTaskV3@3
-            inputs:
-              provider: "azurerm"
-              command: "apply"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config"
-              commandOptions: '-input=false -var global_resource_group_name=global -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
-              environmentServiceNameAzureRM: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
-            displayName: "Terraform apply for $(TeamName)"
+            - bash: |
+                # Get all git commit history
+                git fetch --all
+                git switch $(basename $(Build.SourceBranch))
+                git pull --unshallow
 
-      - job: restart_vm_password
-        dependsOn: create_vms
-        steps:
-          - task: Bash@3
-            inputs:
-              targetType: "inline"
-              workingDirectory: $(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/
-              displayName: "Restart vms password"
-              script: |
-                export vm_list_file=`$(TeamName).tfvars.json`
+                # Get last commit id
+                export last_commit_id=`git log --format="%H" -n 1`
+                echo "Last commit id is $last_commit_id"
 
-                echo "Restarting password for vms in $vm_list_file"
-                resource_group=`jq -c '.team_name' $vm_list_file | tr -d '"'`
-                echo "Resource group is $resource_group"
+                # Get var files name that changed in last commit
+                export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}' | awk -F "." '{ print $1}'`
 
-                jq -c '.VM[]' $vm_list_file | while read i; 
-                do
+                # Check if more then one file changed
+                if [ `echo $vm_list_file | wc -w` -gt 1 ]
+                then
+                echo "More then one file changed, exiting"
+                exit 1
+                fi
+
+                # Check if no file changed
+                if [ -z "$vm_list_file" ]
+                then
+                echo "No file changed, exiting"
+                exit 1
+                fi
+                
+                echo "Team name is $vm_list_file"
+                # Set variable for next stage
+                echo "##vso[task.setvariable variable=TeamName]$vm_list_file"
+
+              name: Get_file_changes
+
+            - task: TerraformInstaller@0
+              inputs:
+                terraformVersion: "latest"
+
+            - task: TerraformTaskV3@3
+              inputs:
+                provider: "azurerm"
+                command: "init"
+                workingDirectory: "Teams_vms/Terraform_config"
+                backendServiceArm: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
+                backendAzureRmResourceGroupName: "terraform"
+                backendAzureRmStorageAccountName: "tfstate4global"
+                backendAzureRmContainerName: "global-tfstate"
+                backendAzureRmKey: $(TeamName)-terraform.tfstate
+              displayName: "Terraform init $(TeamName)"
+
+            - task: TerraformTaskV3@3
+              inputs:
+                provider: "azurerm"
+                command: "apply"
+                workingDirectory: "$(System.DefaultWorkingDirectory)/Teams_vms/Terraform_config"
+                commandOptions: '-input=false -var team_name=$(TeamName) --var-file="../Vm_list/"$(TeamName).tfvars.json"'
+                environmentServiceNameAzureRM: "Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)"
+              displayName: "Terraform apply for $(TeamName)"
+
+
+            - task: AzureCLI@2
+              displayName: 'Restart_vms_password'
+              inputs:
+                azureSubscription: 'Green-Peas-DevOps-DE-001 (e0cc7faf-3760-4b0c-a9df-fecf8d900589)'
+                scriptType: bash
+                scriptLocation: inlineScript
+                workingDirectory: '$(System.DefaultWorkingDirectory)/Teams_vms/Vm_list/'
+                inlineScript: |
+                  export vm_file="$(TeamName).tfvars.json"
+                  echo "VM file is $vm_file"
+                  
+                  export resource_group=`cat $vm_file | jq '.team_name' | tr -d '"'`
+                  echo "Resource group is $resource_group"
+                  
+                  jq -c '.VM[]' $vm_file | while read i; 
+                  do
+
+                    echo "inside loop"
                     vm_name=`echo $i | jq -c '.name'| tr -d '"'`
+                      echo "VM name is $vm_name"
+                  
                     public_key=`echo $i | jq -c '.public_key' | tr -d '"'`
-                    echo "Creating user with public key for $vm_name"
+                      echo "Creating user with public key for $vm_name"
+                    
+                    username_and_public_key=$(jq -n --arg username "$vm_name" --arg ssh_key "$public_key" '{username: $username, ssh_key: $ssh_key}')
+                    
+                    echo $username_and_public_key > ofek.json
                     
                     az vm extension set \
-                        --resource-group $resource_group\
-                        --vm-name $vm_name \
-                        --name "VMAccessForLinux" \
-                        --publisher "Microsoft.OSTCExtensions" \
-                        --version "1.4" \
-                        --protected-settings '{"username": "'"$vm_name"'","ssh_key":"'"$public_key"'"}'
-                done
+                          --resource-group $resource_group\
+                          --vm-name $vm_name \
+                          --name "VMAccessForLinux" \
+                          --publisher "Microsoft.OSTCExtensions" \
+                          --version "1.4" \
+                          --protected-settings "$username_and_public_key"
+
+                  done
