@@ -97,9 +97,9 @@ stages:
                     public_key=`echo $i | jq -c '.public_key' | tr -d '"'`
                       echo "Creating user with public key for $vm_name"
                     
-                    username_and_public_key=$(jq -n --arg username "$vm_name" --arg ssh_key "$public_key" '{"name": $username, ssh_key: $ssh_key}')
+                    username_and_public_key=$(jq -n --arg username "$vm_name" --arg ssh_key "$public_key" '{username: $username, ssh_key: $ssh_key}')
                     
-                    echo "username_and_public_key is $username_and_public_key"
+                    echo $username_and_public_key > ofek.json
                     
                     az vm extension set \
                           --resource-group $resource_group\
@@ -107,7 +107,7 @@ stages:
                           --name "VMAccessForLinux" \
                           --publisher "Microsoft.OSTCExtensions" \
                           --version "1.4" \
-                          --protected-settings $username_and_public_key
+                          --protected-settings "$username_and_public_key"
 
                   done
 
