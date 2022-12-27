@@ -9,12 +9,7 @@ terraform {
 
 
   }
-<<<<<<< Updated upstream
   backend "azurerm" { 
-=======
-  backend "azurerm" {CONFLICT (modify/delete): Teams_vms/Vm_list/Team_Name.tfvars.json deleted in main and modified in HEAD. Version HEAD of Teams_vms/Vm_list/Team_Name.tfvars.json left in tree.
-    
->>>>>>> Stashed changes
   }
 }
 
