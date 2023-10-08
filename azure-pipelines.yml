@@ -26,6 +26,8 @@ stages:
                 # Get var files name that changed in last commit
                 export vm_list_file=`git diff-tree --no-commit-id --name-only -r $last_commit_id | grep -E '*.tfvars.json' | awk -F "/" '{ print $NF}' | awk -F "." '{ print $1}'`
 
+                echo $vm_list_file
+                
                 # Check if more then one file changed
                 if [ `echo $vm_list_file | wc -w` -gt 1 ]
                 then
