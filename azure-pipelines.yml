@@ -21,7 +21,7 @@ stages:
       - job: file_test
         steps:
           - bash: |
-              echo $branchName;
+              echo ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}
             name: tester
 
 
