@@ -17,6 +17,10 @@ stages:
                 # Get all git commit history
                 git fetch --all
                 git switch $(basename $(Build.SourceBranch))
+
+                git branch 
+                echo $(basename $(Build.SourceBranch))
+
                 git pull --unshallow
 
                 # Get last commit id
