@@ -18,13 +18,13 @@ stages:
   - stage: testing
     pool:
       vmImage: ubuntu-latest
-    variables:
-    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
-      branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
-    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
-      branchName: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
     jobs:
       - job: file_test
+        variables:
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+          branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+          branchName: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
         steps:
           - bash: |
               echo $branchName;
