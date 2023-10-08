@@ -27,7 +27,8 @@ stages:
       - job: file_test
         steps:
           - bash: |
-        echo $branchName
+              echo $branchName;
+            name: tester
 
 
   - stage: Publish
