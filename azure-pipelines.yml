@@ -16,10 +16,7 @@ stages:
             - bash: |
                 # Get all git commit history
                 git fetch --all
-                git switch $(basename $(Build.SourceBranch))
-
-                git branch 
-                echo $(basename $(Build.SourceBranch))
+                git switch $(basename $(Build.SourceBranchName))
 
                 git pull --unshallow
 
