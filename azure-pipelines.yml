@@ -11,8 +11,8 @@ stages:
     pool:
       vmImage: ubuntu-latest
     jobs:
-      # - job: file_change
-      #   steps:
+      - job: file_change
+        steps:
       #       - bash: |
       #           # Get all git commit history
       #           git fetch --all
