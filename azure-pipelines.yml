@@ -6,26 +6,15 @@ trigger:
     include:
       - Teams_vms/Vm_list/*
 
-variables:
-- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}: 
-  - name: branchName
-    value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
-- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
-  - name: branchName 
-    value: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
+# variables:
+# - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}: 
+#   - name: branchName
+#     value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+# - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+#   - name: branchName 
+#     value: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
 
 stages:
-  - stage: testing
-    pool:
-      vmImage: ubuntu-latest
-    jobs:
-      - job: file_test
-        steps:
-          - bash: |
-              echo $branchName
-            name: tester
-
-
   - stage: Publish
     pool:
       vmImage: ubuntu-latest
@@ -36,10 +25,7 @@ stages:
                 # Get all git commit history
                 git fetch --all
 
-                git switch $(basename $(Build.SourceBranchName))
-
-                git branch
-                echo $(Build.SourceBranchName)
+                git switch $(basename $(Build.SourceBranch))
 
                 git pull --unshallow
 
