@@ -7,10 +7,11 @@ trigger:
       - Teams_vms/Vm_list/*
 
 variables:
-- name: branchName
-  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}: 
+- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}: 
+  - name: branchName
     value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
-  ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+- ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+  - name: branchName 
     value: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
 
 stages:
@@ -21,7 +22,7 @@ stages:
       - job: file_test
         steps:
           - bash: |
-              echo $(if startsWith(variables['Build.SourceBranch'], 'refs/heads/')
+              echo $branchName
             name: tester
 
 
