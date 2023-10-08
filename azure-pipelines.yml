@@ -18,16 +18,16 @@ stages:
   - stage: testing
     pool:
       vmImage: ubuntu-latest
-    jobs:
-      - job: file_test
-        steps:
-          bash: |
-            echo $branchName
     variables:
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
       branchName: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
     ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
       branchName: $[ replace(variables['System.PullRequest.TargetBranch'], 'refs/heads/', '') ]
+    jobs:
+      - job: file_test
+        steps:
+          - bash: |
+        echo $branchName
 
 
   - stage: Publish
