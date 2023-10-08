@@ -6,10 +6,6 @@ trigger:
     include:
       - Teams_vms/Vm_list/*
 
-variables:
-- name: TeamName
-  value: team 
-
 stages:
   - stage: Publish
     pool:
